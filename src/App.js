@@ -6,7 +6,8 @@ import React from 'react';
 import './App.css';
 import data from './data.json'
 import Products from './components/Products';
-import Filter from './Filter';
+import Filter from './components/Filter';
+import Cart from './components/Cart'
 
 class App extends React.Component {
     
@@ -15,10 +16,48 @@ class App extends React.Component {
     this.state = {
         products: data.products,
         size: "",
-        sort: ""
+        sort: "",
+        cartItems: []
     };
 }
+
+IncrementItem = (count)=>{
+  console.log(count)
+}
+
+
+
+
+
+removeItems = (item) =>{
+  console.log("inside removeItems")
+}
+addToCart = (product) => {
+  const cartItems  = this.state.cartItems.slice();
+  let alreadyInCart  = false;
+  cartItems.forEach((Item) => { 
+    //if items are already present in cart
+    if(Item._id === product._id){
+      Item.count++;
+      alreadyInCart=true;
+    }
     
+  });
+
+  if(!alreadyInCart){
+    cartItems.push({...product,count:1})
+  }
+
+  this.setState({cartItems})
+}
+
+removefromCart = (product)=>{
+  const cartItems = this.state.cartItems.slice()
+  this.setState({
+      cartItems : cartItems.filter((x) => x._id !== product._id )
+  });
+}
+
     sortProducts = (event) => {
       const sort= event.target.value;
         console.log(sort);
@@ -31,6 +70,7 @@ class App extends React.Component {
           )
         }));
     };
+
     filterProducts = (event) =>{
 
       console.log(event.target.value)
@@ -63,10 +103,14 @@ class App extends React.Component {
                       sortProducts = {this.sortProducts}
                       filterProducts = {this.filterProducts}/>
 
-                  <Products products = {this.state.products}/>
+                  <Products products = {this.state.products}
+                            addToCart = {this.addToCart}/>
               </div>
               <div className='sidebar'>
-                  cart  items
+                  <Cart cartItems={this.state.cartItems}
+                  IncrementItem = {this.IncrementItem}
+                  DecrementCount = {this.DecrementCount}
+                  removefromCart = {this.removefromCart} />
               </div>
             </div>
           </main>
